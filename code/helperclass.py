@@ -1,17 +1,19 @@
 import tensorflow as tf
 import tensorflow.keras.losses as kloss
 from agents import Agent
+import os
 
 
 class MADDPG:
     #initialize agents for the environments with their parameters leanring rates etc
     def __init__(self, actor_dims, critic_dims, n_agents, n_actions,
                  scenario='simple', alpha=0.01, beta=0.01, fc1=64,
-                 fc2=64, gamma=0.99, tau=0.005, chkpt_dir='tmp/maddpg/'):
+                 fc2=64, gamma=0.99, tau=0.005, chkpt_dir='D:/Users/ch/Desktop/SkyNetMEC/'):
         self.agents = []
         self.n_agents = n_agents
         self.n_actions = n_actions
         chkpt_dir += scenario
+        # 通过 for 循环创建每个智能体（Agent）并将其添加到 self.agents 列表中。每个智能体的初始化使用以下参数：
         for agent_idx in range(self.n_agents):
             self.agents.append(Agent(actor_dims[agent_idx], critic_dims,
                                      n_actions, n_agents, agent_idx, alpha=alpha, beta=beta,
@@ -29,7 +31,7 @@ class MADDPG:
 
     def choose_action(self, raw_obs):
         actions = []
-        for agent_idx, agent in enumerate(self.agents):
+        for agent_idx, agent in enumerate(self.agents):  # 遍历所有的智能体
             action = agent.choose_action(raw_obs[agent_idx])
             actions.append(action)
         return actions
@@ -80,7 +82,8 @@ class MADDPG:
             critic_value = tf.reshape(critic_value, (-1,))
             #critic target Q value = reward(current) + gama*(future rewards) (bellman equation)
             target = rewards[:, agent_idx] + agent.gamma * critic_value_
-            critic_loss = tf.keras.losses.mean_squared_error(target, critic_value)
+            mse_loss = tf.keras.losses.MeanSquaredError()
+            critic_loss = mse_loss(target, critic_value)
 
     
             critic_grads = tape.gradient(critic_loss, agent.critic.trainable_variables)

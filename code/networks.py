@@ -24,7 +24,9 @@ class CriticNetwork(tf.keras.Model):
         return q
 
     def save_checkpoint(self):
-        self.save_weights(self.chkpt_file)
+        checkpoint_path = "D:/Users/ch/Desktop/SkyNetMEC/simple/agent_0_critic.weights.h5"
+        os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
+        self.save_weights(checkpoint_path)
 
     def load_checkpoint(self):
         self.load_weights(self.chkpt_file)
@@ -50,7 +52,9 @@ class ActorNetwork(tf.keras.Model):
         return pi
 
     def save_checkpoint(self):
-        self.save_weights(self.chkpt_file)
+        checkpoint_path = "./agent_0_actor.weights.h5"
+        os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
+        self.save_weights(checkpoint_path)
 
     def load_checkpoint(self):
         self.load_weights(self.chkpt_file)
